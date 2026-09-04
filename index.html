@@ -76,7 +76,7 @@
     .ticker-title { background: #b91c1c; padding: 6px 12px; white-space: nowrap; z-index: 2; }
     .ticker-marquee { white-space: nowrap; overflow: hidden; width: 100%; }
     
-    /* اسپيڊ صفا گھٽ ڪئي وئي آھي (45s) */
+    /* اسپيڊ صفا گھٽ (45s) */
     .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 45s linear infinite; }
     @keyframes marquee { 0% { transform: translate(-100%, 0); } 100% { transform: translate(100%, 0); } }
 
@@ -109,6 +109,27 @@
     .video-thumb-container { position: relative; width: 100%; height: 160px; background: #000; overflow: hidden; }
     .video-thumb-container iframe { width: 100%; height: 100%; border: none; }
     .video-card-title { padding: 8px 10px; font-size: 13px; font-weight: bold; color: var(--text-main); line-height: 1.3; }
+
+    /* ---------------------------------------------------- */
+    /* نئون اسڪرولنگ ڪنٽينر خبرن لاءِ (Short News Scroll Box) */
+    /* ---------------------------------------------------- */
+    .news-scroll-box {
+      max-height: 480px;
+      overflow-y: auto;
+      padding-left: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
+    }
+    .news-scroll-box::-webkit-scrollbar {
+      width: 5px;
+    }
+    .news-scroll-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .news-scroll-box::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 4px;
+    }
 
     /* Feed Cards */
     .feed-card {
@@ -190,7 +211,7 @@
     <button class="nav-tab" id="tab-sports" onclick="switchCategory('sports')">⚽ اسپورٽس</button>
   </nav>
 
-  <!-- Ticker Bar -->
+  <!-- News Ticker Bar -->
   <div class="news-ticker-container">
     <div class="ticker-title">خاص خبر</div>
     <div class="ticker-marquee">
@@ -219,17 +240,19 @@
       <!-- Facebook Video Card 2 -->
       <div class="video-card">
         <div class="video-thumb-container">
-          <iframe src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Fdaharkiweb%2Fvideos%2F10153231322244%2F&show_text=false" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+          <iframe src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Fdaharkiweb%2Fvideos%2F1015323132244%2F&show_text=false" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
         </div>
         <div class="video-card-title">G One فيس بڪ ويڊيو ۲</div>
       </div>
     </div>
 
-    <!-- Feed Title & List -->
+    <!-- Feed Title -->
     <div class="section-title">
       <span id="feed-category-title">📰 تازيون خبرون</span>
     </div>
-    <div id="secondary-news"></div>
+
+    <!-- Scrollable News Feed Box -->
+    <div class="news-scroll-box" id="secondary-news"></div>
 
   </div>
 
