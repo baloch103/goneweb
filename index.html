@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>G ONE WEB - نيوز پورٽل</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --primary: #2563eb;
+      --accent: #ef4444;
+      --border-color: #e2e8f0;
+      --header-bg: #1e293b;
+    }
+
+    body.dark-mode {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      --border-color: #334155;
+      --header-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 75px; transition: background-color 0.3s, color 0.3s; }
+
+    /* Top App Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--header-bg);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .brand-logo { font-size: 20px; font-weight: 800; color: #38bdf8; text-decoration: none; letter-spacing: 0.5px; }
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+    .theme-toggle-btn { background: #334155; border: none; color: #f8fafc; font-size: 16px; padding: 6px 10px; border-radius: 20px; cursor: pointer; }
+
+    /* App Horizontal Nav Bar */
+    .app-nav {
+      background: var(--header-bg);
+      display: flex;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 0 8px 8px 8px;
+      border-bottom: 1px solid var(--border-color);
+      scrollbar-width: none;
+    }
+    .app-nav::-webkit-scrollbar { display: none; }
+    .app-nav button {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 20px;
+      margin-left: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .app-nav button.active { background: #38bdf8; color: #0f172a; }
+
+    /* News Ticker Bar */
+    .news-ticker-container { background: var(--accent); color: white; display: flex; align-items: center; overflow: hidden; font-size: 13px; font-weight: bold; }
+    .ticker-title { background: #b91c1c; padding: 6px 12px; white-space: nowrap; z-index: 2; }
+    .ticker-marquee { white-space: nowrap; overflow: hidden; width: 100%; }
+    
+    /* اسپيڊ صفا گھٽ ڪئي وئي آھي (45s) */
+    .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 45s linear infinite; }
+    @keyframes marquee { 0% { transform: translate(-100%, 0); } 100% { transform: translate(100%, 0); } }
+
+    /* App Container Layout */
+    .app-container { max-width: 600px; margin: 0 auto; padding: 12px; }
+
+    /* Section Headers */
+    .section-title { font-size: 16px; font-weight: bold; margin: 15px 0 10px 0; display: flex; align-items: center; justify-content: space-between; color: var(--text-main); }
+    .section-title::after { content: ''; flex: 1; height: 2px; background: var(--border-color); margin-right: 10px; }
+
+    /* Main Featured News Card */
+    .featured-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+    .featured-card img { width: 100%; height: 210px; object-fit: cover; display: block; }
+    .featured-content { padding: 14px; }
+    .featured-content h2 { font-size: 18px; line-height: 1.4; color: var(--text-main); margin-bottom: 8px; }
+    .featured-content p { font-size: 14px; color: var(--text-sub); line-height: 1.6; max-height: 4.8em; overflow: hidden; }
+
+    /* Facebook & Video Section */
+    .video-scroll-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+    .video-scroll-container::-webkit-scrollbar { display: none; }
+    .video-card { min-width: 280px; width: 280px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; flex-shrink: 0; }
+    .video-thumb-container { position: relative; width: 100%; height: 160px; background: #000; overflow: hidden; }
+    .video-thumb-container iframe { width: 100%; height: 100%; border: none; }
+    .video-card-title { padding: 8px 10px; font-size: 13px; font-weight: bold; color: var(--text-main); line-height: 1.3; }
+
+    /* Feed Cards */
+    .feed-card {
+      display: flex;
+      gap: 12px;
+      background: var(--card-bg);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 10px;
+      align-items: center;
+      cursor: pointer;
+    }
+    .feed-img { width: 85px; height: 85px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #cbd5e1; }
+    .feed-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 85px; }
+    .feed-title { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .feed-meta { font-size: 11px; color: var(--text-sub); display: flex; justify-content: space-between; align-items: center; }
+
+    /* Bottom Mobile Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 100;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-sub);
+      background: none;
+      border: none;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { font-size: 18px; margin-bottom: 2px; }
+
+    /* Modal Styling */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
+    .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 20px; position: relative; }
+    .modal-close { position: absolute; top: 15px; left: 15px; background: #ef4444; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; font-weight: bold; }
+    .modal-title { font-size: 18px; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
+    .modal-img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+    .modal-body { font-size: 14px; color: var(--text-sub); line-height: 1.8; white-space: pre-line; }
+
+    /* Social Share Buttons */
+    .share-container { display: flex; gap: 6px; margin-top: 8px; }
+    .share-btn { padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold; color: white; border: none; cursor: pointer; }
+    .btn-fb { background-color: #1877f2; }
+    .btn-wa { background-color: #25d366; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="app-header">
+    <a href="#" onclick="switchCategory('all')" class="brand-logo">G ONE WEB</a>
+    <div class="header-actions">
+      <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙</button>
+    </div>
+  </header>
+
+  <!-- Horizontal Categories Navigation -->
+  <nav class="app-nav">
+    <button class="nav-tab active" id="tab-all" onclick="switchCategory('all')">🏠 هوم</button>
+    <button class="nav-tab" id="tab-local" onclick="switchCategory('local')">📍 لوڪل خبرون</button>
+    <button class="nav-tab" id="tab-science" onclick="switchCategory('science')">🧬 سائنس</button>
+    <button class="nav-tab" id="tab-international" onclick="switchCategory('international')">🌍 انٽرنيشنل</button>
+    <button class="nav-tab" id="tab-technology" onclick="switchCategory('technology')">💻 ٽيڪنالوجي</button>
+    <button class="nav-tab" id="tab-sports" onclick="switchCategory('sports')">⚽ اسپورٽس</button>
+  </nav>
+
+  <!-- Ticker Bar -->
+  <div class="news-ticker-container">
+    <div class="ticker-title">خاص خبر</div>
+    <div class="ticker-marquee">
+      <div class="ticker-text" id="top-slider">G ONE WEB تي ڀليڪار! خبرون لوڊ ٿي رهيون آهن...</div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- Main Featured Headline -->
+    <div id="first-featured-news"></div>
+
+    <!-- Facebook & Videos Section -->
+    <div class="section-title" id="videos-header">
+      <span>🎥 فيس بڪ ويڊيوز</span>
+    </div>
+    <div class="video-scroll-container" id="video-news-box">
+      <!-- Facebook Video Card 1 -->
+      <div class="video-card">
+        <div class="video-thumb-container">
+          <iframe src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Fdaharkiweb%2Fvideos%2F10153231322233%2F&show_text=false" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card-title">G One فيس بڪ ويڊيو ۱</div>
+      </div>
+
+      <!-- Facebook Video Card 2 -->
+      <div class="video-card">
+        <div class="video-thumb-container">
+          <iframe src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Fdaharkiweb%2Fvideos%2F10153231322244%2F&show_text=false" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card-title">G One فيس بڪ ويڊيو ۲</div>
+      </div>
+    </div>
+
+    <!-- Feed Title & List -->
+    <div class="section-title">
+      <span id="feed-category-title">📰 تازيون خبرون</span>
+    </div>
+    <div id="secondary-news"></div>
+
+  </div>
+
+  <!-- Bottom App Navigation Bar -->
+  <div class="bottom-nav">
+    <button class="bottom-nav-item active" onclick="switchCategory('all')">
+      <span class="bottom-nav-icon">🏠</span>
+      <span>هوم</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchCategory('local')">
+      <span class="bottom-nav-icon">📍</span>
+      <span>لوڪل</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchCategory('science')">
+      <span class="bottom-nav-icon">🧬</span>
+      <span>سائنس</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchCategory('international')">
+      <span class="bottom-nav-icon">🌍</span>
+      <span>انٽرنيشنل</span>
+    </button>
+  </div>
+
+  <!-- Modal Screen -->
+  <div class="modal-overlay" id="newsModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeNewsModal()">✕</button>
+      <h2 class="modal-title" id="mTitle"></h2>
+      <img id="mImg" class="modal-img" src="" alt="News Image" style="display:none;">
+      <p class="modal-body" id="mContent"></p>
+      <div class="share-container" id="mShareBtns" style="margin-top:15px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://hhywazbkgalioqqpuhyz.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeXdhemJrZ2FsaW9xcXB1aHl6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODE0OTI0MCwiZXhwIjoyMTAzNzI1MjQwfQ.yHHUaGrOn8gKy_1kgujNXupqziJZmQalVIS0F9AU0sY';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let globalNewsArray = [];
+    let currentCategory = 'all';
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function createShareButtons(title) {
+      const pageUrl = encodeURIComponent(window.location.href);
+      const encTitle = encodeURIComponent(title + " - G ONE WEB");
+      return `
+        <div class="share-container">
+          <a href="https://api.whatsapp.com/send?text=${encTitle}%20${pageUrl}" target="_blank" class="share-btn btn-wa">🟢 WhatsApp</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${pageUrl}" target="_blank" class="share-btn btn-fb">📘 Facebook</a>
+        </div>
+      `;
+    }
+
+    async function loadPageData() {
+      const { data: sliderData } = await _supabase.from('news').select('title').eq('is_trending', true).order('created_at', { ascending: false });
+      if(sliderData && sliderData.length > 0) {
+        document.getElementById('top-slider').innerText = sliderData.map(n => n.title).join('  ||  ');
+      }
+
+      const { data: allNews } = await _supabase.from('news').select('*').order('created_at', { ascending: false });
+
+      if(allNews && allNews.length > 0) {
+        globalNewsArray = allNews;
+        renderNewsFeed();
+      } else {
+        document.getElementById('first-featured-news').innerHTML = "<p style='text-align:center;padding:20px;'>ڪابه خبر موجود ناهي.</p>";
+      }
+    }
+
+    function switchCategory(cat) {
+      currentCategory = cat;
+      
+      document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+      const activeTab = document.getElementById('tab-' + cat);
+      if(activeTab) activeTab.classList.add('active');
+
+      const vidHeader = document.getElementById('videos-header');
+      const vidBox = document.getElementById('video-news-box');
+      if(cat === 'all') {
+        vidHeader.style.display = 'flex';
+        vidBox.style.display = 'flex';
+      } else {
+        vidHeader.style.display = 'none';
+        vidBox.style.display = 'none';
+      }
+
+      renderNewsFeed();
+    }
+
+    function renderNewsFeed() {
+      let filtered = globalNewsArray;
+      if(currentCategory !== 'all') {
+        filtered = globalNewsArray.filter(n => n.category && n.category.toLowerCase() === currentCategory.toLowerCase());
+      }
+
+      const titleMap = {
+        'all': '📰 تازيون خبرون',
+        'local': '📍 لوڪل خبرون',
+        'science': '🧬 سائنس جون خبرون',
+        'international': '🌍 انٽرنيشنل خبرون',
+        'technology': '💻 ٽيڪنالوجي',
+        'sports': '⚽ اسپورٽس'
+      };
+      document.getElementById('feed-category-title').innerText = titleMap[currentCategory] || '📰 تازيون خبرون';
+
+      if(filtered.length === 0) {
+        document.getElementById('first-featured-news').innerHTML = '';
+        document.getElementById('secondary-news').innerHTML = "<p style='text-align:center;padding:20px;color:var(--text-sub);'>هن سيڪشن ۾ ڪا به خبر موجود ناهي.</p>";
+        return;
+      }
+
+      const first = filtered[0];
+      const firstImgHtml = (first.image_url && first.image_url !== 'null') ? `<img src="${first.image_url}" alt="news">` : '';
+
+      document.getElementById('first-featured-news').innerHTML = `
+        <div class="featured-card" onclick="openNewsModal('${first.id}')">
+          ${firstImgHtml}
+          <div class="featured-content">
+            <h2>${first.title}</h2>
+            <p>${first.content}</p>
+            ${createShareButtons(first.title)}
+          </div>
+        </div>
+      `;
+
+      const secondary = filtered.slice(1);
+      if(secondary.length > 0) {
+        document.getElementById('secondary-news').innerHTML = secondary.map(n => {
+          const cardImgHtml = (n.image_url && n.image_url !== 'null') 
+            ? `<img src="${n.image_url}" class="feed-img" alt="news">` 
+            : `<div class="feed-img" style="display:flex;align-items:center;justify-content:center;">📰</div>`;
+
+          return `
+            <div class="feed-card" onclick="openNewsModal('${n.id}')">
+              ${cardImgHtml}
+              <div class="feed-details">
+                <div class="feed-title">${n.title}</div>
+                <div class="feed-meta">
+                  <span>${new Date(n.created_at).toLocaleDateString('sd-PK')}</span>
+                  <span>پڙهو ➔</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        document.getElementById('secondary-news').innerHTML = '';
+      }
+    }
+
+    function openNewsModal(newsId) {
+      const item = globalNewsArray.find(n => n.id == newsId);
+      if(!item) return;
+
+      document.getElementById('mTitle').innerText = item.title;
+      document.getElementById('mContent').innerText = item.content;
+      document.getElementById('mShareBtns').innerHTML = createShareButtons(item.title);
+
+      const imgElem = document.getElementById('mImg');
+      if(item.image_url && item.image_url !== 'null') {
+        imgElem.src = item.image_url;
+        imgElem.style.display = 'block';
+      } else {
+        imgElem.style.display = 'none';
+      }
+
+      document.getElementById('newsModal').style.display = 'flex';
+    }
+
+    function closeNewsModal() {
+      document.getElementById('newsModal').style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById('newsModal');
+      if (e.target === modal) modal.style.display = "none";
+    }
+
+    loadPageData();
+  </script>
+</body>
+</html>
