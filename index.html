@@ -29,42 +29,64 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 75px; transition: background-color 0.3s, color 0.3s; }
 
+    /* Header */
     .app-header { position: sticky; top: 0; z-index: 100; background: var(--header-bg); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
     .brand-logo { font-size: 20px; font-weight: 800; color: #38bdf8; text-decoration: none; }
-    .theme-toggle-btn { background: #334155; border: none; color: #f8fafc; padding: 6px 10px; border-radius: 20px; cursor: pointer; }
+    .theme-toggle-btn { background: #334155; border: none; color: #f8fafc; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 14px; }
 
+    /* Navigation */
     .app-nav { background: var(--header-bg); display: flex; overflow-x: auto; padding: 0 8px 8px 8px; border-bottom: 1px solid var(--border-color); scrollbar-width: none; }
     .app-nav::-webkit-scrollbar { display: none; }
-    .app-nav button { background: transparent; border: none; color: #94a3b8; padding: 8px 14px; font-size: 14px; font-weight: 600; border-radius: 20px; margin-left: 6px; cursor: pointer; }
+    .app-nav button { background: transparent; border: none; color: #94a3b8; padding: 8px 14px; font-size: 14px; font-weight: 600; border-radius: 20px; margin-left: 6px; cursor: pointer; white-space: nowrap; }
     .app-nav button.active { background: #38bdf8; color: #0f172a; }
 
+    /* News Ticker */
     .news-ticker-container { background: var(--accent); color: white; display: flex; align-items: center; overflow: hidden; font-size: 13px; font-weight: bold; }
     .ticker-title { background: #b91c1c; padding: 6px 12px; white-space: nowrap; z-index: 2; }
     .ticker-marquee { white-space: nowrap; overflow: hidden; width: 100%; }
     .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 45s linear infinite; }
     @keyframes marquee { 0% { transform: translate(-100%, 0); } 100% { transform: translate(100%, 0); } }
 
+    /* Layout Container */
     .app-container { max-width: 600px; margin: 0 auto; padding: 12px; }
     .section-title { font-size: 16px; font-weight: bold; margin: 15px 0 10px 0; display: flex; align-items: center; color: var(--text-main); }
     .section-title::after { content: ''; flex: 1; height: 2px; background: var(--border-color); margin-right: 10px; }
 
-    /* Video Embed Box Frame */
-    .embed-video-wrapper {
+    /* Facebook Video Box Styling */
+    .featured-video-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .video-header-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .facebook-video-wrapper {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
       background: #000;
+      position: relative;
       margin-bottom: 8px;
     }
-    .embed-video-wrapper iframe {
+    .facebook-video-wrapper iframe {
       width: 100% !important;
-      min-height: 320px;
+      height: 480px;
       border: none;
       display: block;
     }
 
-    /* Scrollable News Container */
-    .news-scroll-box { max-height: 480px; overflow-y: auto; padding-left: 4px; scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
+    /* News Feed Cards */
+    .news-scroll-box { max-height: 520px; overflow-y: auto; padding-left: 4px; scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
     .news-scroll-box::-webkit-scrollbar { width: 5px; }
     .news-scroll-box::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
 
@@ -74,23 +96,26 @@
     .feed-title { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .feed-meta { font-size: 11px; color: var(--text-sub); display: flex; justify-content: space-between; }
 
-    /* Modal */
+    /* Modal Detail Popup */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
     .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 20px; position: relative; }
     .modal-close { position: absolute; top: 15px; left: 15px; background: #ef4444; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: bold; }
 
+    /* Bottom Navigation */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
     .bottom-nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); background: none; border: none; font-size: 11px; cursor: pointer; }
-    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-item.active { color: var(--primary); font-weight: bold; }
   </style>
 </head>
 <body>
 
+  <!-- Top Header -->
   <header class="app-header">
     <a href="#" onclick="switchCategory('all')" class="brand-logo">G ONE WEB</a>
-    <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙</button>
+    <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙 ڊارڪ موڊ</button>
   </header>
 
+  <!-- Category Nav -->
   <nav class="app-nav">
     <button class="nav-tab active" id="tab-all" onclick="switchCategory('all')">🏠 هوم</button>
     <button class="nav-tab" id="tab-local" onclick="switchCategory('local')">📍 لوڪل خبرون</button>
@@ -98,6 +123,7 @@
     <button class="nav-tab" id="tab-international" onclick="switchCategory('international')">🌍 انٽرنيشنل</button>
   </nav>
 
+  <!-- Breaking News Ticker -->
   <div class="news-ticker-container">
     <div class="ticker-title">خاص خبر</div>
     <div class="ticker-marquee">
@@ -105,19 +131,39 @@
     </div>
   </div>
 
+  <!-- Main Content Container -->
   <div class="app-container">
-    <div id="first-featured-news"></div>
 
+    <!-- Specific Embedded Facebook Reel Video -->
+    <div class="featured-video-card">
+      <div class="video-header-title">🎥 خاص وڊيو خبر</div>
+      <div class="facebook-video-wrapper">
+        <iframe 
+          src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F2154340318797676&show_text=false" 
+          width="100%" 
+          height="480" 
+          scrolling="no" 
+          frameborder="0" 
+          allowfullscreen="true" 
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- News List Section -->
     <div class="section-title"><span id="feed-category-title">📰 تازيون خبرون</span></div>
-    <div class="news-scroll-box" id="secondary-news"></div>
+    <div class="news-scroll-box" id="secondary-news">لوڊ ٿي رهيو آهي...</div>
+
   </div>
 
+  <!-- Bottom Nav -->
   <div class="bottom-nav">
     <button class="bottom-nav-item active" onclick="switchCategory('all')">🏠<span> هوم</span></button>
     <button class="bottom-nav-item" onclick="switchCategory('local')">📍<span> لوڪل</span></button>
     <button class="bottom-nav-item" onclick="switchCategory('science')">🧬<span> سائنس</span></button>
   </div>
 
+  <!-- News Detail Modal -->
   <div class="modal-overlay" id="newsModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeNewsModal()">✕</button>
@@ -138,47 +184,47 @@
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
     async function loadPageData() {
+      // Load Ticker Headlines
       const { data: sliderData } = await _supabase.from('news').select('title').eq('is_trending', true).order('created_at', { ascending: false });
       if(sliderData && sliderData.length > 0) {
         document.getElementById('top-slider').innerText = sliderData.map(n => n.title).join('  ||  ');
+      } else {
+        document.getElementById('top-slider').innerText = "ਜੀ ਵਨ ਵੈਬ - ਤਾਜ਼ਾ ਖਬਰੋਂ ਲਾਇਵ";
       }
 
+      // Load News Feed
       const { data: allNews } = await _supabase.from('news').select('*').order('created_at', { ascending: false });
       if(allNews && allNews.length > 0) {
         globalNewsArray = allNews;
-        renderNewsFeed();
+        renderNewsFeed('all');
+      } else {
+        document.getElementById('secondary-news').innerHTML = '<p style="text-align:center; padding:20px;">ڪابه خبر ناهي ملي.</p>';
       }
     }
 
-    function renderNewsFeed() {
-      if(globalNewsArray.length === 0) return;
+    function switchCategory(cat) {
+      document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+      const activeTab = document.getElementById('tab-' + cat);
+      if(activeTab) activeTab.classList.add('active');
 
-      const first = globalNewsArray[0];
-      let mediaHtml = '';
+      renderNewsFeed(cat);
+    }
 
-      // Check Video vs Image
-      if(first.video_code) {
-        mediaHtml = `<div class="embed-video-wrapper">${first.video_code}</div>`;
-      } else if(first.image_url && first.image_url !== 'null') {
-        mediaHtml = `<img src="${first.image_url}" style="width:100%; height:210px; object-fit:cover;">`;
+    function renderNewsFeed(category) {
+      let filtered = globalNewsArray;
+      if(category !== 'all') {
+        filtered = globalNewsArray.filter(n => n.category === category);
       }
 
-      document.getElementById('first-featured-news').innerHTML = `
-        <div class="feed-card" style="flex-direction:column; align-items:flex-start;" onclick="openNewsModal('${first.id}')">
-          ${mediaHtml}
-          <div style="padding:5px;">
-            <h2 style="font-size:16px; margin-bottom:5px;">${first.title}</h2>
-            <p style="font-size:13px; color:var(--text-sub);">${first.content}</p>
-          </div>
-        </div>
-      `;
+      const container = document.getElementById('secondary-news');
+      if(filtered.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:20px;">هن ڪيٽيگري ۾ ڪابه خبر ناهي.</p>';
+        return;
+      }
 
-      const secondary = globalNewsArray.slice(1);
-      document.getElementById('secondary-news').innerHTML = secondary.map(n => {
-        let thumbHtml = `<div class="feed-img" style="display:flex;align-items:center;justify-content:center;">📰</div>`;
-        if(n.video_code) {
-          thumbHtml = `<div class="feed-img" style="display:flex;align-items:center;justify-content:center;background:#1e293b;color:#38bdf8;font-size:20px;">🎥</div>`;
-        } else if(n.image_url && n.image_url !== 'null') {
+      container.innerHTML = filtered.map(n => {
+        let thumbHtml = `<div class="feed-img" style="display:flex;align-items:center;justify-content:center;background:#e2e8f0;">📰</div>`;
+        if(n.image_url && n.image_url !== 'null') {
           thumbHtml = `<img src="${n.image_url}" class="feed-img">`;
         }
 
@@ -187,7 +233,10 @@
             ${thumbHtml}
             <div class="feed-details">
               <div class="feed-title">${n.title}</div>
-              <div class="feed-meta"><span>${new Date(n.created_at).toLocaleDateString('sd-PK')}</span></div>
+              <div class="feed-meta">
+                <span>${n.category || 'خبر'}</span>
+                <span>${new Date(n.created_at).toLocaleDateString('sd-PK')}</span>
+              </div>
             </div>
           </div>
         `;
@@ -201,26 +250,19 @@
       document.getElementById('mTitle').innerText = item.title;
       document.getElementById('mContent').innerText = item.content;
 
-      const vBox = document.getElementById('mVideoBox');
       const imgElem = document.getElementById('mImg');
-
-      if(item.video_code) {
-        vBox.innerHTML = `<div class="embed-video-wrapper">${item.video_code}</div>`;
-        imgElem.style.display = 'none';
+      if(item.image_url && item.image_url !== 'null') {
+        imgElem.src = item.image_url;
+        imgElem.style.display = 'block';
       } else {
-        vBox.innerHTML = '';
-        if(item.image_url && item.image_url !== 'null') {
-          imgElem.src = item.image_url;
-          imgElem.style.display = 'block';
-        } else {
-          imgElem.style.display = 'none';
-        }
+        imgElem.style.display = 'none';
       }
 
       document.getElementById('newsModal').style.display = 'flex';
     }
 
     function closeNewsModal() { document.getElementById('newsModal').style.display = 'none'; }
+
     loadPageData();
   </script>
 </body>
