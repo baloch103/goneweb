@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>G ONE WEB - نيوز پورٽل</title>
+  <title>G ONE NEWS HD - نيوز پورٽل</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -15,6 +15,7 @@
       --accent: #ef4444;
       --border-color: #e2e8f0;
       --header-bg: #1e293b;
+      --footer-bg: #0f172a;
     }
 
     body.dark-mode {
@@ -24,15 +25,16 @@
       --text-sub: #cbd5e1;
       --border-color: #334155;
       --header-bg: #0f172a;
+      --footer-bg: #020617;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 75px; transition: background-color 0.3s, color 0.3s; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 70px; transition: background-color 0.3s, color 0.3s; }
 
     /* Header */
-    .app-header { position: sticky; top: 0; z-index: 100; background: var(--header-bg); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-    .brand-logo { font-size: 20px; font-weight: 800; color: #38bdf8; text-decoration: none; }
-    .theme-toggle-btn { background: #334155; border: none; color: #f8fafc; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 14px; }
+    .app-header { position: sticky; top: 0; z-index: 100; background: var(--header-bg); color: white; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .brand-logo-img { height: 40px; width: auto; object-fit: contain; }
+    .theme-toggle-btn { background: #334155; border: none; color: #f8fafc; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; }
 
     /* Navigation */
     .app-nav { background: var(--header-bg); display: flex; overflow-x: auto; padding: 0 8px 8px 8px; border-bottom: 1px solid var(--border-color); scrollbar-width: none; }
@@ -52,7 +54,16 @@
     .section-title { font-size: 16px; font-weight: bold; margin: 15px 0 10px 0; display: flex; align-items: center; color: var(--text-main); }
     .section-title::after { content: ''; flex: 1; height: 2px; background: var(--border-color); margin-right: 10px; }
 
-    /* News Feed Cards */
+    /* Featured First News (Full View) */
+    .featured-full-news { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; }
+    .featured-full-img { width: 100%; max-height: 280px; object-fit: cover; display: block; background: #e2e8f0; }
+    .featured-full-body { padding: 14px; }
+    .featured-badge { background: #ef4444; color: white; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+    .featured-full-title { font-size: 18px; font-weight: bold; line-height: 1.4; color: var(--text-main); margin-bottom: 8px; }
+    .featured-full-content { font-size: 14px; color: var(--text-sub); line-height: 1.6; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .featured-meta { font-size: 12px; color: #64748b; display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 8px; }
+
+    /* Secondary News Cards (Short View) */
     .news-scroll-box { max-height: 520px; overflow-y: auto; padding-left: 4px; scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
     .news-scroll-box::-webkit-scrollbar { width: 5px; }
     .news-scroll-box::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
@@ -64,47 +75,22 @@
     .feed-meta { font-size: 11px; color: var(--text-sub); display: flex; justify-content: space-between; }
 
     /* Facebook Video Box Styling (16:9 Aspect Ratio) */
-    .featured-video-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 25px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .video-header-title {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    /* 16:9 Aspect Ratio Container */
-    .facebook-video-wrapper {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%; /* 16:9 Aspect Ratio (9 / 16 = 0.5625) */
-      border-radius: 10px;
-      overflow: hidden;
-      background: #000;
-    }
-    .facebook-video-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100% !important;
-      height: 100% !important;
-      border: none;
-      display: block;
-    }
+    .featured-video-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-top: 25px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .video-header-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+    .facebook-video-wrapper { position: relative; width: 100%; padding-top: 56.25%; border-radius: 10px; overflow: hidden; background: #000; }
+    .facebook-video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: none; display: block; }
 
     /* Modal Detail Popup */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
     .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 20px; position: relative; }
     .modal-close { position: absolute; top: 15px; left: 15px; background: #ef4444; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+
+    /* Footer Section */
+    .app-footer { background: var(--footer-bg); color: #94a3b8; padding: 24px 16px; text-align: center; border-top: 1px solid var(--border-color); margin-top: 30px; font-size: 13px; line-height: 1.8; }
+    .footer-logo { max-height: 45px; margin-bottom: 12px; }
+    .footer-contacts { margin: 12px 0; border-top: 1px solid #334155; border-bottom: 1px solid #334155; padding: 10px 0; }
+    .footer-contacts p { margin: 4px 0; color: #e2e8f0; font-size: 13px; }
+    .footer-contacts a { color: #38bdf8; text-decoration: none; font-weight: 600; }
 
     /* Bottom Navigation */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
@@ -116,7 +102,9 @@
 
   <!-- Top Header -->
   <header class="app-header">
-    <a href="#" onclick="switchCategory('all')" class="brand-logo">G ONE WEB</a>
+    <a href="#" onclick="switchCategory('all')">
+      <img src="740608616_1030572712839198_8588796774299367958_n.jfif" alt="G ONE NEWS HD" class="brand-logo-img">
+    </a>
     <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙 ڊارڪ موڊ</button>
   </header>
 
@@ -139,11 +127,14 @@
   <!-- Main Content Container -->
   <div class="app-container">
 
-    <!-- News List Section (First / Top) -->
-    <div class="section-title"><span id="feed-category-title">📰 تازيون خبرون</span></div>
+    <!-- Primary Full News (First Item) -->
+    <div id="first-news-container"></div>
+
+    <!-- Secondary Short News Section -->
+    <div class="section-title"><span id="feed-category-title">📰 باقي خبرون</span></div>
     <div class="news-scroll-box" id="secondary-news">لوڊ ٿي رهيو آهي...</div>
 
-    <!-- Specific Embedded Facebook Reel Video (Positioned Below News, Perfect 16:9 Frame) -->
+    <!-- Facebook Video Box -->
     <div class="featured-video-card">
       <div class="video-header-title">🎥 خاص وڊيو خبر</div>
       <div class="facebook-video-wrapper">
@@ -158,6 +149,19 @@
     </div>
 
   </div>
+
+  <!-- Footer Section -->
+  <footer class="app-footer">
+    <img src="740608616_1030572712839198_8588796774299367958_n.jfif" alt="G ONE NEWS HD" class="footer-logo"><br>
+    <strong>G One News HD</strong> - سچي ۽ اڻڌري نيوز پورٽل
+
+    <div class="footer-contacts">
+      <p>📞 Phone: <a href="tel:03333126406">0333 3126406</a></p>
+      <p>💬 WhatsApp: <a href="https://wa.me/923003126406" target="_blank">+92 300 3126406</a></p>
+    </div>
+
+    <p>© All Rights Reserved - G One News</p>
+  </footer>
 
   <!-- Bottom Nav -->
   <div class="bottom-nav">
@@ -192,7 +196,7 @@
       if(sliderData && sliderData.length > 0) {
         document.getElementById('top-slider').innerText = sliderData.map(n => n.title).join('  ||  ');
       } else {
-        document.getElementById('top-slider').innerText = "ਜੀ ਵਨ ਵੈਬ - ਤਾਜ਼ਾ ਖਬਰੋਂ ਲਾਇਵ";
+        document.getElementById('top-slider').innerText = "جي ون نيوز ايڇ ڊي - تازا خبرون لائو";
       }
 
       // Load News Feed
@@ -201,6 +205,7 @@
         globalNewsArray = allNews;
         renderNewsFeed('all');
       } else {
+        document.getElementById('first-news-container').innerHTML = '';
         document.getElementById('secondary-news').innerHTML = '<p style="text-align:center; padding:20px;">ڪابه خبر ناهي ملي.</p>';
       }
     }
@@ -219,13 +224,42 @@
         filtered = globalNewsArray.filter(n => n.category === category);
       }
 
-      const container = document.getElementById('secondary-news');
+      const firstContainer = document.getElementById('first-news-container');
+      const secondaryContainer = document.getElementById('secondary-news');
+
       if(filtered.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding:20px;">هن ڪيٽيگري ۾ ڪابه خبر ناهي.</p>';
+        firstContainer.innerHTML = '';
+        secondaryContainer.innerHTML = '<p style="text-align:center; padding:20px;">هن ڪيٽيگري ۾ ڪابه خبر ناهي.</p>';
         return;
       }
 
-      container.innerHTML = filtered.map(n => {
+      // First News Render (Full Version)
+      const firstNews = filtered[0];
+      let firstImg = (firstNews.image_url && firstNews.image_url !== 'null') ? firstNews.image_url : '';
+      
+      firstContainer.innerHTML = `
+        <div class="featured-full-news" onclick="openNewsModal('${firstNews.id}')">
+          ${firstImg ? `<img src="${firstImg}" class="featured-full-img">` : ''}
+          <div class="featured-full-body">
+            <span class="featured-badge">🔥 اهم خبر</span>
+            <div class="featured-full-title">${firstNews.title}</div>
+            <div class="featured-full-content">${firstNews.content || ''}</div>
+            <div class="featured-meta">
+              <span>📍 ${firstNews.category || 'خبر'}</span>
+              <span>📅 ${new Date(firstNews.created_at).toLocaleDateString('sd-PK')}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remaining News Render (Short Version)
+      const secondaryNewsList = filtered.slice(1);
+      if(secondaryNewsList.length === 0) {
+        secondaryContainer.innerHTML = '<p style="text-align:center; padding:10px; color:var(--text-sub);">وڌيڪ خبرون ناهن.</p>';
+        return;
+      }
+
+      secondaryContainer.innerHTML = secondaryNewsList.map(n => {
         let thumbHtml = `<div class="feed-img" style="display:flex;align-items:center;justify-content:center;background:#e2e8f0;">📰</div>`;
         if(n.image_url && n.image_url !== 'null') {
           thumbHtml = `<img src="${n.image_url}" class="feed-img">`;
